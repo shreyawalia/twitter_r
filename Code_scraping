@@ -1,0 +1,27 @@
+#The code used used to collect tweets
+library(rtweet)
+library(dplyr)
+library(tidyverse)
+library(readr)
+rtweets <- search_tweets("#HongKongElections", n = 18000, include_rts = FALSE)
+rtweets <- as.data.frame(rtweets)
+head(rtweets)
+save_as_csv(rtweets, "Rest.Tweets.csv", prepend_ids = TRUE, na = "",
+            fileEncoding = "UTF-8")
+Rest_Tweets <- read_csv("Rest.Tweets.csv")
+
+stream_tweets("#HongKongElections",timeout = 60 * 60 * 7,
+              file_name = "stweets.json",
+             parse = FALSE
+)
+
+Stream.Tweets <- parse_stream("stweets.json")
+
+save_as_csv(Stream.Tweets, "Stream.Tweets.csv", prepend_ids = TRUE, na = "",
+          fileEncoding = "UTF-8")
+Stream_Tweets <- read_csv("Stream.Tweets.csv")
+
+Twitter_Data <- rbind(Rest_Tweets, Stream_Tweets)
+head(Twitter_Data)
+save_as_csv(Twitter_Data, "Twitter_Data.csv", prepend_ids = TRUE, na = "",
+            fileEncoding = "UTF-8")
